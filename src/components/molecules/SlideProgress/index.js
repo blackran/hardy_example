@@ -1,0 +1,144 @@
+import React from 'react';
+import { View, Text, Animated } from 'react-native';
+import { Spacings, Colors as defColors } from '../../../components';
+import { PanGestureHandler } from 'react-native-gesture-handler';
+
+function SlideProgress() {
+  const widthSliderProgress = 200;
+
+  const translateXOne = React.useRef(new Animated.Value(32 / 2)).current;
+  const translateXTwo = React.useRef(
+    new Animated.Value(widthSliderProgress - 32 / 2),
+  ).current;
+
+  const onHandlerStateChangeOne = React.useCallback(() => {
+    translateXOne.extractOffset();
+  }, [translateXOne]);
+
+  const onHandlerStateChangeTwo = React.useCallback(() => {
+    translateXTwo.extractOffset();
+  }, [translateXTwo]);
+
+  const onGestureEventOne = React.useRef(
+    Animated.event([{ nativeEvent: { translationX: translateXOne } }], {
+      listener: event => {
+        // const { absoluteX } = event?.nativeEvent;
+        // let xmove = absoluteX - 32 * 3;
+        // if (xmove < 0) {
+        //   xmove = 0;
+        // }
+        // if (xmove > widthSliderProgress) {
+        //   xmove = widthSliderProgress;
+        // }
+        // setXOne(xmove);
+      },
+      useNativeDriver: true,
+    }),
+  ).current;
+
+  const onGestureEventTwo = React.useRef(
+    Animated.event([{ nativeEvent: { translationX: translateXTwo } }], {
+      useNativeDriver: true,
+    }),
+  ).current;
+
+  const Colors = defColors(false);
+  const size = Spacings.large;
+
+  const transOne = Animated.diffClamp(
+    translateXOne,
+    32 / 2,
+    widthSliderProgress - 32 - 32 / 2,
+  );
+  const transTwo = Animated.diffClamp(
+    translateXTwo,
+    32 / 2 + 32,
+    widthSliderProgress - 32 / 2,
+  );
+
+  return (
+    <View>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          left: -32 * 3,
+          marginLeft: 50,
+        }}>
+        <PanGestureHandler
+          maxPointer={1}
+          onHandlerStateChange={onHandlerStateChangeOne}
+          onGestureEvent={onGestureEventOne}>
+          <Animated.View
+            style={{
+              position: 'absolute',
+              width: size,
+              borderWidth: Spacings.tiny / 3,
+              backgroundColor: Colors.White,
+              borderColor: Colors.Black,
+              borderRadius: size,
+              height: size,
+              justifyContent: 'center',
+              alignItems: 'center',
+              transform: [{ translateX: transOne }],
+              zIndex: 2,
+            }}>
+            <Text>1</Text>
+          </Animated.View>
+        </PanGestureHandler>
+        <PanGestureHandler
+          maxPointer={1}
+          onHandlerStateChange={onHandlerStateChangeTwo}
+          onGestureEvent={onGestureEventTwo}>
+          <Animated.View
+            style={{
+              position: 'absolute',
+              zIndex: 2,
+              width: size,
+              borderWidth: Spacings.tiny / 3,
+              backgroundColor: Colors.White,
+              borderRadius: size,
+              height: size,
+              transform: [{ translateX: transTwo }],
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text>2</Text>
+          </Animated.View>
+        </PanGestureHandler>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: Colors.PrimaryLight,
+            borderRadius: size,
+            height: Spacings.tiny / 2,
+            width: widthSliderProgress,
+            alignItems: 'center',
+            overflow: 'hidden',
+            left: 32 * 3,
+          }}>
+          <Animated.View
+            style={{
+              position: 'absolute',
+              width: '100%',
+              backgroundColor: Colors.Black,
+              height: Spacings.tiny / 2,
+              transform: [{ translateX: transOne }],
+            }}
+          />
+          <Animated.View
+            style={{
+              zIndex: 2,
+              width: '100%',
+              backgroundColor: Colors.PrimaryLight,
+              height: Spacings.tiny / 2,
+              transform: [{ translateX: transTwo }],
+            }}
+          />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+export default SlideProgress;

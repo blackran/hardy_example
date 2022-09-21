@@ -1,0 +1,5 @@
+export { default as Colors } from './Colors'
+export { default as Images } from './Images'
+export { default as Spacings } from './Spacings'
+export { default as Types } from './Types'
+export { default as Icons } from './Icons'
